@@ -36,11 +36,18 @@ class tutorial extends Phaser.Scene {
         this.load.image('heart', 'assets/heart.png');
         this.load.image('cheese', 'assets/cheese.png');
         this.load.image('plant', 'assets/plant.png');
+
+        this.load.audio("damage","assets/damage.mp3");
+      this.load.audio("collect","assets/collect.mp3");
+
     }
 
 
 
     create() {
+
+        this.collectSnd= this.sound.add("collect")
+        this.damageSnd= this.sound.add("damage")
 
  // Call to update inventory
  this.time.addEvent({
@@ -271,6 +278,7 @@ if(this.enemyCollision >= 3) {
 
     collectCheese (player,cheese1) {
         console.log("collectCheese")
+        this.collectSnd.play();
 
         window.cheese++
 
@@ -279,6 +287,7 @@ if(this.enemyCollision >= 3) {
     }
     health (player,plant) {
         console.log("health")
+        this.collectSnd.play();
 
         window.plant++
 

@@ -8,20 +8,8 @@ class floor1 extends Phaser.Scene {
         // Put global variable here
     }
 
-    // init(data) {
-    //     this.cheese = data.cheese;
-    //     this.health = data.health;
-    //   }
 
     preload() {
-
-        // Preload all the assets here
-
-        // Preload any images here
-
-        // Preload any sound and music here
-        // this.load.audio('ping', 'assets/ping.mp3');
-        // this.load.audio('bgMusic', 'assets/bgMusic.mp3');
 
         this.load.spritesheet('main', 'assets/MainC full.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('enemy1', 'assets/Enemy full.png', { frameWidth: 64, frameHeight: 64 });
@@ -33,11 +21,17 @@ class floor1 extends Phaser.Scene {
 
         this.load.image("pipoyaIMG", "assets/pipoya.png");
         this.load.image("Castle2IMG", "assets/Castle2.png");
+
+        this.load.audio("damage","assets/damage.mp3");
+        this.load.audio("collect","assets/collect.mp3");
     }
 
 
 
     create() {
+
+        this.collectSnd= this.sound.add("collect")
+        this.damageSnd= this.sound.add("damage")
 
         // Call to update inventory
  this.time.addEvent({
@@ -83,10 +77,20 @@ class floor1 extends Phaser.Scene {
         this.tweens.add({
             targets: this.enemy1,
             y: 1000,
-            flipY: true,
+            flipY: false,
             yoyo: true,
             duration: 4000,
-            repeat: -1
+            repeat: -1,
+
+            onYoyo: () => {
+                console.log('onYoyo');
+                this.enemy1.play ("enemy1-up")
+              
+            },
+            onRepeat: () => {
+                console.log('onRepeat');
+                this.enemy1.play ("enemy1-down")
+            },
         })
 
         this.physics.add.overlap(
@@ -119,7 +123,7 @@ class floor1 extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         this.cheeseCollected = this.add
-         .text(20, 46, "Cheese collected 0",{
+         .text(20, 46, "Cheese collected " + window.cheese,{
           fontSize: "20px",
           fill: "#f5f607",
          })
@@ -162,6 +166,7 @@ class floor1 extends Phaser.Scene {
 
     collectCheese (player,cheese1) {
         console.log("collectCheese")
+        this.collectSnd.play();
 
         window.cheese++
 

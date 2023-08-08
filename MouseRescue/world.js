@@ -75,24 +75,6 @@ class world extends Phaser.Scene {
       font: "30px Courier",
       fill: "#00FFFF",
     });
-
-    // Add main player here with physics.add.sprite
-
-    // Add time event / movement here
-
-    // get the tileIndex number in json, +1
-    //mapLayer.setTileIndexCallback(11, this.room1, this);
-
-    // Add custom properties in Tiled called "mouintain" as bool
-
-    // What will collider witg what layers
-    //this.physics.add.collider(mapLayer, this.player);
-
-    // create the arrow keys
-    //this.cursors = this.input.keyboard.createCursorKeys();
-
-    // camera follow player
-    //this.cameras.main.startFollow(this.player);
   } /////////////////// end of create //////////////////////////////
 
   update() {} /////////////////// end of update //////////////////////////////

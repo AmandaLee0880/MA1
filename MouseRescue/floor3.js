@@ -10,14 +10,6 @@ class floor3 extends Phaser.Scene {
 
     preload() {
 
-        // Preload all the assets here
-
-        // Preload any images here
-
-        // Preload any sound and music here
-        // this.load.audio('ping', 'assets/ping.mp3');
-        // this.load.audio('bgMusic', 'assets/bgMusic.mp3');
-
         this.load.spritesheet('main', 'assets/MainC full.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('enemy1', 'assets/Enemy full.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('enemy2', 'assets/Enemy full.png', { frameWidth: 64, frameHeight: 64 });
@@ -29,23 +21,30 @@ class floor3 extends Phaser.Scene {
 
         this.load.image("pipoyaIMG", "assets/pipoya.png");
         this.load.image("Castle2IMG", "assets/Castle2.png");
+
+        this.load.audio("damage", "assets/damage.mp3");
+        this.load.audio("collect", "assets/collect.mp3");
     }
 
 
 
     create() {
 
+        this.collectSnd = this.sound.add("collect")
+        this.damageSnd = this.sound.add("damage")
+
         // Call to update inventory
- this.time.addEvent({
-    delay: 100,
-    callback: updateInventory,
-    callbackScope: this,
-    loop: false,
-    });
+        this.time.addEvent({
+            delay: 100,
+            callback: updateInventory,
+            callbackScope: this,
+            loop: false,
+        });
 
         console.log('*** floor3 scene');
-        console.log ("this.cheese",this.cheese)
-        console.log ("this.heath",this.health)
+        console.log("this.cheese", this.cheese)
+        console.log("this.heath", this.health)
+        // console.log ("this.win",this.victim)
 
         var map = this.make.tilemap({ key: 'floor3' });
 
@@ -88,28 +87,29 @@ class floor3 extends Phaser.Scene {
         this.walls = map.createLayer("walls", tilesArray, 0, 0);
         this.dooropen = map.createLayer("dooropen", tilesArray, 0, 0);
         this.obsticals = map.createLayer("obsticals", tilesArray, 0, 0);
-        
 
-        this.cheese1 = this.physics.add.sprite (320,610,'cheese').setScale(0.5);
-        this.cheese2 = this.physics.add.sprite (560,160,'cheese').setScale(0.5);
-        this.cheese3 = this.physics.add.sprite (900,140,'cheese').setScale(0.5);
-        this.plant = this.physics.add.sprite (870,910,'plant').setScale(0.5);
+
+        this.cheese1 = this.physics.add.sprite(320, 610, 'cheese').setScale(0.5);
+        this.cheese2 = this.physics.add.sprite(560, 160, 'cheese').setScale(0.5);
+        this.cheese3 = this.physics.add.sprite(900, 140, 'cheese').setScale(0.5);
+        this.plant = this.physics.add.sprite(870, 910, 'plant').setScale(0.5);
 
         let start = map.findObject("objectLayer", obj => obj.name === "start");
         console.log(start.x, start.y)
-        
+
         let enemy1 = map.findObject("objectLayer", obj => obj.name === "enemy1");
         let enemy2 = map.findObject("objectLayer", obj => obj.name === "enemy2");
         let victim = map.findObject("objectLayer", obj => obj.name === "victim");
 
         this.player = this.physics.add.sprite(start.x, start.y, "main").setScale(1).play("up")
-        this.player.body.setSize(this.player.width * 0.7, this.player .height * 0.8)
-        window.player =this.player
+        this.player.body.setSize(this.player.width * 0.7, this.player.height * 0.8)
+        window.player = this.player
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.enemy1 = this.physics.add.sprite(enemy1.x, enemy1.y, "enemy1").setScale(1).play("enemy1-right")
         this.enemy2 = this.physics.add.sprite(enemy2.x, enemy2.y, "enemy2").setScale(1).play("enemy2-left")
-        
+        this.victim = this.physics.add.sprite(victim.x, victim.y, "victim").setScale(1).play("victim-down")
+
         this.tweens.add({
             targets: this.enemy1,
             x: 600,
@@ -129,31 +129,39 @@ class floor3 extends Phaser.Scene {
 
         this.physics.add.overlap(
             this.player,
-            [this.cheese1,this.cheese2,this.cheese3],
+            [this.cheese1, this.cheese2, this.cheese3],
             this.collectCheese,
             null,
             this
-          );
-          this.physics.add.overlap(
+        );
+        this.physics.add.overlap(
             this.player,
             [this.plant],
             health,
             null,
             this
-          );
-          this.physics.add.overlap(
+        );
+        this.physics.add.overlap(
             this.player,
-            [this.enemy1,this.enemy2],
+            [this.enemy1, this.enemy2],
             takeDamage,
             null,
             this
-          );
-        
-        this.victim = this.physics.add.sprite(victim.x, victim.y, "victim").setScale(1).play("victim-down")
+        );
+        this.physics.add.overlap(
+            this.player,
+            [this.victim],
+            winFunction,
+            null,
+            this
+        );
+
+
 
         this.walls.setCollisionByExclusion(-1, true)
         this.physics.add.collider(this.player, this.walls);
-        
+
+
         this.dooropen.setCollisionByExclusion(-1, true)
         this.physics.add.collider(this.player, this.dooropen);
 
@@ -163,16 +171,18 @@ class floor3 extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         this.cheeseCollected = this.add
-         .text(20, 46, "Cheese collected 0",{
-          fontSize: "20px",
-          fill: "#f5f607",
-         })
-         .setScrollFactor(0);
+            .text(20, 46, "Cheese collected " + window.cheese, {
+                fontSize: "20px",
+                fill: "#f5f607",
+            })
+            .setScrollFactor(0);
 
-         console.log("showInventory");
+        console.log("showInventory");
 
-    // start another scene in parallel
-    this.scene.launch("showInventory");
+        // start another scene in parallel
+        this.scene.launch("showInventory");
+
+        this.events.once('doorlock', this.handler, this);
     }
 
 
@@ -197,18 +207,38 @@ class floor3 extends Phaser.Scene {
             this.player.setVelocity(0);
             this.player.anims.stop()
         }
-       
+
+        if (this.player.x > 478 && this.player.x < 510 &&
+            this.player.y < 640 && this.player.y > 630) {
+            if (window.cheese >= 12) {
+                console.log("open door")
+                this.dooropen.setCollisionByExclusion(-1, false)
+            }
+            else {
+                console.log("not enough cheese")
+                this.cameras.main.shake(100);
+                this.damageSnd.play();
+                this.player.y = 650
+            }
+        }
+    }/////end of update/////////
+
+    handler() {
+        console.log("not enough cheese")
+        this.cameras.main.shake(100);
+        this.damageSnd.play();
     }
 
-    collectCheese (player,cheese1) {
+    collectCheese(player, cheese1) {
         console.log("collectCheese")
+        this.collectSnd.play();
 
         window.cheese++
 
         cheese1.disableBody(true, true);
-        this.cheeseCollected.setText("Cheese collected " + window.cheese );
+        this.cheeseCollected.setText("Cheese collected " + window.cheese);
     }
-    health (player,plant) {
+    health(player, plant) {
         console.log("health")
 
         window.plant++
@@ -216,4 +246,4 @@ class floor3 extends Phaser.Scene {
         plant.disableBody(true, true);
     }
 
-    }
+}

@@ -28,11 +28,17 @@ class floor2 extends Phaser.Scene {
 
         this.load.image("pipoyaIMG", "assets/pipoya.png");
         this.load.image("Castle2IMG", "assets/Castle2.png");
+
+        this.load.audio("damage","assets/damage.mp3");
+        this.load.audio("collect","assets/collect.mp3");
     }
 
 
 
     create() {
+
+        this.collectSnd= this.sound.add("collect")
+        this.damageSnd= this.sound.add("damage")
 
         // Call to update inventory
  this.time.addEvent({
@@ -122,7 +128,7 @@ class floor2 extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         this.cheeseCollected = this.add
-         .text(20, 46, "Cheese collected 0",{
+         .text(20, 46, "Cheese collected " + window.cheese,{
           fontSize: "20px",
           fill: "#f5f607",
          })
@@ -165,6 +171,7 @@ class floor2 extends Phaser.Scene {
 
     collectCheese (player,cheese1) {
         console.log("collectCheese")
+        this.collectSnd.play();
 
         window.cheese++
 

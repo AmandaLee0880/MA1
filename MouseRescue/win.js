@@ -14,8 +14,9 @@ class win extends Phaser.Scene {
     }
   
     create() {
-      console.log("*** mainpage scene");
+      console.log("*** win scene");
   
+      window.music.stop();
       // Add image and detect spacebar keypress
       this.add.image(0, 0, 'win').setOrigin(0, 0);
   
@@ -31,8 +32,6 @@ class win extends Phaser.Scene {
         },
         this
       );
-    //   this.sealsound = this.sound.add("seal");
-    //     this.sealsound.play();
   
       }}
   

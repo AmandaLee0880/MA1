@@ -6,7 +6,7 @@
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: false
         }
     },
     scale: {
@@ -15,7 +15,7 @@
     },
     backgroundColor: '#000000',
     pixelArt: true,
-    scene: [mainpage,storyline,howtoplay,beware,tutorial,floor1,floor2,floor3,gameover,showInventory]
+    scene: [mainpage,storyline,howtoplay,beware,tutorial,floor1,floor2,floor3,gameover,win,showInventory]
 };
 
 var game = new Phaser.Game(config);

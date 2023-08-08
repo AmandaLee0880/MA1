@@ -15,6 +15,8 @@ function takeDamage(player,enemy) {
     // Shake screen
    this.cameras.main.shake(100);
 
+   this.damageSnd.play();
+   
     window.heart--;
     enemy.disableBody(true, true);
     //this.updateInventory()
@@ -26,9 +28,15 @@ function takeDamage(player,enemy) {
 }
 function health(player,plant) {
     console.log("*** enemy overlap main");
-
+    this.collectSnd.play();
     window.heart++;
     plant.disableBody(true, true);
     //this.updateInventory()
     updateInventory.call(this)
+}
+
+function winFunction(player,victim) {
+  console.log("*** victim overlap main");
+  this.scene.start("win");
+
 }

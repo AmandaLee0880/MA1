@@ -15,17 +15,7 @@ class gameover extends Phaser.Scene {
   create() {
     console.log("*** gameover scene");
 
-    // Add any sound and music here
-    // ( 0 = mute to 1 is loudest )
-    //this.music = this.sound.add('bgMusic').setVolume(0.3) // 10% volume
-    // window.music.stop();
-    
-    // this.bgmSnd = this.sound.add('gameoverMusic').setVolume(0.1);
-    // this.bgmSnd.play();
-    // this.bgmSnd.loop = true;
-
-    //this.music.play()
-    //window.music = this.music
+    window.music.stop();
 
     // Add image and detect spacebar keypress
     this.add.image(0, 0, 'gameover').setOrigin(0, 0);
